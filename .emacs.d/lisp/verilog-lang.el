@@ -1,0 +1,17 @@
+;; Verilog Mode
+(add-hook 'verilog-mode-hook '(lambda ()
+  (setq verilog-auto-indent-on-newline nil)
+  (setq verilog-auto-lineup nil)
+  (setq verilog-auto-newline nil)
+  (setq verilog-case-indent 2)
+  (setq verilog-cexp-indent 2)
+  (setq verilog-indent-level 2)
+  (setq verilog-indent-level-behavioral 2)
+  (setq verilog-indent-level-declaration 2)
+  (setq verilog-indent-level-module 2)
+  (setq verilog-tab-always-indent nil)
+  (setq whitespace-line-column 80
+        whitespace-style '(face empty tabs lines-tail trailing))
+  (whitespace-mode t)
+  (add-hook 'local-write-file-hooks 'whitespace-cleanup-on-save)
+  ))

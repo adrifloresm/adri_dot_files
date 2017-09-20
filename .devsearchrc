@@ -1,0 +1,3 @@
+[devsearch]
+root = :::~/dev:
+vcs = git:svn:::hg:cvs:

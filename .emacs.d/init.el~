@@ -1,0 +1,61 @@
+0(add-to-list 'load-path "~/.emacs.d/lisp")
+
+(require 'whitespace)
+
+(require 'graphviz-dot-mode)
+(require 'markdown-mode)
+;;(require 'protobuf-mode)
+(require 'thrift-mode)
+
+;; ========== Enable clipboard ==========
+(setq x-select-enable-clipboard t)
+
+;; ========== Highlight matching parentheis ==========
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+
+;; ========== Highlight current line ==========
+(setq global-linum-mode t)
+(global-hl-line-mode 1)
+(set-face-background 'hl-line "#3e4446")
+(set-face-foreground 'highlight nil)
+
+
+;; ========== Line by line scrolling ==========
+
+;; This makes the buffer scrol{l by only a single line when the up or
+;; down cursor keys push the cursor (tool-bar-mode) outside the
+;; buffer. The standard emacs behaviour is to reposition the cursor in
+;; the center of the screen, but this can make the scrolling confusing
+(setq scroll-step 1)
+
+;; ========== Support Wheel Mouse Scrolling ==========
+(mouse-wheel-mode t)
+
+;; ==========  ==========
+
+(load "~/.emacs.d/lisp/ui.el")
+(load "~/.emacs.d/lisp/keybindings.el")
+(load "~/.emacs.d/lisp/functions.el")
+
+(load "~/.emacs.d/lisp/autosave.el")
+(load "~/.emacs.d/lisp/backup.el")
+
+(load "~/.emacs.d/lisp/c-lang.el")
+(load "~/.emacs.d/lisp/cpp-lang.el")
+(load "~/.emacs.d/lisp/graphviz-dot-lang.el")
+(load "~/.emacs.d/lisp/java-lang.el")
+(load "~/.emacs.d/lisp/javascript-lang.el")
+(load "~/.emacs.d/lisp/latex-lang.el")
+(load "~/.emacs.d/lisp/lisp-lang.el")
+(load "~/.emacs.d/lisp/markdown-lang.el")
+(load "~/.emacs.d/lisp/octave-lang.el")
+;;(load "~/.emacs.d/lisp/protobuf-lang.el")
+(load "~/.emacs.d/lisp/python-lang.el")
+(load "~/.emacs.d/lisp/shell-lang.el")
+(load "~/.emacs.d/lisp/text-lang.el")
+(load "~/.emacs.d/lisp/thrift-lang.el")
+(load "~/.emacs.d/lisp/verilog-lang.el")
+(load "~/.emacs.d/lisp/vhdl-lang.el")
+
+(load "~/.emacs.d/lisp/google-c-style.el")

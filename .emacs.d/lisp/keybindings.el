@@ -1,0 +1,23 @@
+(global-set-key "\C-u" 'undo)
+(global-set-key "\M-s" 'save-buffer)
+(global-set-key "\M-o" 'find-file)
+(global-set-key "\C-v" 'yank)
+(global-set-key "\M-u" 'upcase-word)
+(global-set-key "\M-l" 'downcase-word)
+
+(global-set-key "\M-0" 'delete-window)
+(global-set-key "\M-1" 'delete-other-windows)
+(global-set-key "\M-2" 'split-window-vertically)
+(global-set-key "\M-3" 'split-window-horizontally)
+(global-set-key "\M-g" 'goto-line)
+
+(global-set-key (kbd "M-<left>") 'previous-user-buffer)
+(global-set-key (kbd "M-<right>") 'next-user-buffer)
+(global-set-key (kbd "M-C-<left>") 'the-previous-buffer)
+(global-set-key (kbd "M-C-<right>") 'bury-buffer)
+(global-set-key (kbd "C-<tab>") 'next-multiframe-window)
+
+(global-set-key (kbd "C-M-S-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "C-M-S-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-M-S-<up>") 'enlarge-window)
+(global-set-key (kbd "C-M-S-<down>") 'shrink-window)
