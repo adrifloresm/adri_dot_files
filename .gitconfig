@@ -3,12 +3,11 @@
 # `git config --global <section>.<key> <value>` — both update this file.
 
 [user]
-	# name/email are embedded in every commit's author line. Change `name`
-	# to your preferred display name; email must match a GitHub-verified
-	# address for "Verified" badges on web.
-	name = adrianaf
-	# TODO: replace with full display name if desired
-	email = adrianaf@nvidia.com
+	# name/email are embedded in every commit's author line. Fill these in
+	# before committing (or set them per-repo with `git config user.email`).
+	# email must match a GitHub-verified address for "Verified" badges.
+	name =
+	email =
 
 [github]
 	# Used by `gh` CLI and some hub-style tooling when inferring your
