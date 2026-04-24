@@ -1,122 +1,190 @@
+# ~/.gitconfig: user-wide git configuration.
+# Sections map to `git config --global` keys. Edit here OR via
+# `git config --global <section>.<key> <value>` — both update this file.
+
 [user]
-	name = 
-	email = 
+	# name/email are embedded in every commit's author line. Change `name`
+	# to your preferred display name; email must match a GitHub-verified
+	# address for "Verified" badges on web.
+	name = adrianaf
+	# TODO: replace with full display name if desired
+	email = adrianaf@nvidia.com
+
 [github]
-	user = 
+	# Used by `gh` CLI and some hub-style tooling when inferring your
+	# account. Leave blank to let tools prompt instead.
+	user = # TODO: fill in your github username
+
 [core]
+	# Default editor for `git commit`, `git rebase -i`, etc.
 	editor = emacs
+	# -r preserves ANSI color codes when git pipes output through less.
 	pager = less -r
+	# Whitespace rules `git diff --check` and `git apply --whitespace=fix`
+	# complain about / auto-fix:
+	#   fix                      -> auto-fix on `git apply --whitespace=fix`
+	#   -indent-with-non-tab     -> DON'T flag non-tab indents as errors
+	#   trailing-space           -> flag trailing spaces/tabs
+	#   cr-at-eol                -> flag DOS (CRLF) line endings
 	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
 [web]
+	# Used by `git web--browse` (and `git instaweb`) to open HTML.
 	browser = google-chrome
+
 [color]
+	# "true" = always colorize when the output is a tty; "always" forces
+	# colors even when piping (usually undesirable).
 	ui = true
+
 [color "branch"]
-	current = yellow bold
-	local = green bold
-	remote = cyan bold
+	# Colors for `git branch` output.
+	current = yellow bold   # the branch you're on
+	local   = green bold    # other local branches
+	remote  = cyan bold     # remote-tracking branches (origin/...)
+
 [color "diff"]
-	meta = yellow bold
-	frag = magenta bold
-	old = red bold
-	new = green bold
-	whitespace = red reverse
+	# Colors for `git diff`, `git log -p`, etc.
+	meta       = yellow bold   # `diff --git a/... b/...` header line
+	frag       = magenta bold  # hunk header `@@ -a,b +c,d @@`
+	old        = red bold      # removed lines
+	new        = green bold    # added lines
+	whitespace = red reverse   # highlight whitespace errors
+
 [color "status"]
-	added = green bold
-	changed = yellow bold
-	untracked = red bold
+	# Colors for `git status` output.
+	added     = green bold   # staged additions
+	changed   = yellow bold  # modified but not staged
+	untracked = red bold     # unknown to git
+
 [push]
+	# "simple" = push the current branch to its upstream of the same
+	# name, and refuse otherwise. Safer than the old "matching" default.
 	default = simple
+
 [rerere]
-	enabled = 1
-	autoupdate = 1
+	# rerere = "reuse recorded resolution". Git remembers how you
+	# resolved a merge conflict and auto-replays that resolution next
+	# time the same conflict appears (common during long-running rebases).
+	enabled    = 1
+	autoupdate = 1  # stage the auto-resolved files for you
+
+###############################################################################
+# Aliases
+###############################################################################
+# Short aliases save keystrokes. Invoke as `git <alias>`. Unsafe aliases
+# are flagged inline below — read them before blindly running them.
 [alias]
-	s = status
-	sb = status -s -b
-	#############
-	sa = stash apply
-	sc = stash clear
-	sd = stash drop
+	#---- status ----
+	s  = status
+	sb = status -s -b   # short format, show branch line
+
+	#---- stash ----
+	sa = stash apply    # re-apply topmost stash, KEEP it in stash list
+	sc = stash clear    # drop ALL stashes — irreversible
+	sd = stash drop     # drop the topmost stash
 	sl = stash list
-	sp = stash pop
+	sp = stash pop      # re-apply + drop topmost (apply+drop)
 	ss = stash save
-	#############
-	d = diff
-	dc = diff --cached
-	dk = diff --check
+
+	#---- diff ----
+	d   = diff                # worktree vs index
+	dc  = diff --cached       # index vs HEAD (what `git commit` will record)
+	dk  = diff --check        # show whitespace errors only
 	dck = diff --cached --check
-	#############
-	c = commit
-	ca = commit -a
-	cm = commit -m
+
+	#---- commit ----
+	c   = commit
+	ca  = commit -a           # auto-stage modified tracked files
+	cm  = commit -m
 	cam = commit -am
-	cd = commit --amend
+	cd  = commit --amend      # rewrite the last commit
 	cad = commit -a --amend
-	#############
+
+	#---- add ----
+	# WARNING: stages EVERYTHING under the cwd including new files. Use
+	# `git a <path>` or `git add -p` when you want more control.
 	a = add .
-	#############
-	ap = apply
-	as = apply --stat
-	ac = apply --check
-	#############
-	l = log --oneline
+
+	#---- apply / patch ----
+	ap = apply                # apply a patch to the worktree
+	as = apply --stat         # just show what a patch would change
+	ac = apply --check        # dry-run: would it apply cleanly?
+
+	#---- log ----
+	l  = log --oneline
 	lg = log --oneline --graph --decorate
-	#############
-	o = checkout
-	ob = checkout -b
-	#############
-	b = branch
-	ba = branch -a
-	bd = branch -d
-	br = branch -r
-	#############
-	f = fetch
+
+	#---- checkout ----
+	o  = checkout
+	ob = checkout -b          # create + switch
+
+	#---- branch ----
+	b  = branch
+	ba = branch -a            # include remote-tracking branches
+	bd = branch -d            # delete if fully merged
+	br = branch -r            # only remote-tracking
+
+	#---- fetch ----
+	f  = fetch
 	fo = fetch origin
-	#############
+
+	#---- format-patch / fsck ----
 	fp = format-patch
-	#############
-	fk = fsck
-	#############
+	fk = fsck                 # integrity check of the object database
+
+	#---- merge ----
 	m = merge
-	#############
-	pr = prune -v
-	#############
-	ps = push
-	pl = pull
-	pb = pull --rebase
-	psf = push -f
-	psu = push -u
-	plu = pull -u
-	pso = push origin
-	plo = pull origin
-	pbo = pull --rebase origin
-	psfo = push -f origin
+
+	#---- prune ----
+	pr = prune -v             # drop unreachable objects (use with care)
+
+	#---- push / pull ----
+	ps   = push
+	pl   = pull
+	pb   = pull --rebase      # rebase local commits on top of upstream
+	psf  = push -f            # WARNING: force-push — can overwrite history
+	psu  = push -u            # set upstream tracking on first push
+	plu  = pull -u
+	pso  = push origin
+	plo  = pull origin
+	pbo  = pull --rebase origin
+	psfo = push -f origin     # WARNING: force-push to origin
 	psuo = push -u origin
 	pluo = pull -u origin
-	#############
+
+	#---- rebase ----
 	rb = rebase
-	#############
-	re = reset
-	rh = reset HEAD
-	reh = reset --hard
-	rem = reset --mixed
-	res = reset --soft
-	rehh = reset --hard HEAD
+
+	#---- reset ----
+	re   = reset
+	rh   = reset HEAD         # unstage everything
+	reh  = reset --hard       # WARNING: discards worktree + index changes
+	rem  = reset --mixed      # reset index, keep worktree (the default)
+	res  = reset --soft       # reset HEAD only, keep index + worktree
+	rehh = reset --hard HEAD  # WARNING: discard all local changes
 	remh = reset --mixed HEAD
 	resh = reset --soft HEAD
-	#############
-	r = remote
-	ra = remote add
-	rm = remote rm
-	rv = remote -v
-	rp = remote prune
-	rs = remote show
+
+	#---- remote ----
+	r   = remote
+	ra  = remote add
+	rm  = remote rm
+	rv  = remote -v           # show URLs
+	rp  = remote prune        # drop stale remote-tracking refs
+	rs  = remote show
 	rso = remote show origin
 	rpo = remote prune origin
-	#############
+
+	#---- show ----
 	w = show
-	#############
-	meldon = config diff.external /home/pkumar/.meld.py
+
+	#---- meld (visual diff) ----
+	# TODO: install a meld wrapper at ~/.meld.py or delete these aliases.
+	# Original config pointed at /home/pkumar/.meld.py (wrong user).
+	meldon = config diff.external ~/.meld.py
 	meldof = config --remove-section diff
-	#############
+
+	#---- misc ----
+	# name-rev: reverse-lookup a commit to the nearest ref name.
 	human = name-rev --name-only --refs=refs/heads/*

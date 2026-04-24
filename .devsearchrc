@@ -1,3 +1,17 @@
+# ~/.devsearchrc: configuration for the `devsearch` tool.
+# devsearch walks a set of "root" directories looking for version-controlled
+# project checkouts and lets you fuzzy-jump into them. Invoked in this repo
+# via the `dev` alias in ~/.bashrc: `alias dev='source devsearch'`.
+#
+# Syntax: INI-style, colon-delimited list values. Empty entries between
+# colons are allowed and act as "unset / skip this position" — the tool
+# uses positional slots, so leading/trailing/empty colons matter.
+
 [devsearch]
+# root: colon-separated list of directories to search for projects.
+# Here: empty, empty, empty, "~/dev", empty — i.e. only ~/dev is active.
 root = :::~/dev:
+
+# vcs: colon-separated list of version-control systems to detect (by
+# looking for .git/.svn/.hg/.cvs metadata dirs inside each root entry).
 vcs = git:svn:::hg:cvs:

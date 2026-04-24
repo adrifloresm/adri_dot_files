@@ -1,9 +1,20 @@
 #!/bin/bash
+# ~/.prompt: custom, git-aware PS1 for interactive bash shells.
+# Sourced from ~/.bashrc. Defines a PROMPT_COMMAND that rebuilds PS1 before
+# every prompt, so colors reflect the live git state of the current dir.
 
+###############################################################################
+# ANSI color palette
+###############################################################################
+# Each entry is an escape sequence wrapped in `\[ ... \]`. The brackets are
+# a readline hint: "these bytes don't advance the cursor". Without them, bash
+# miscounts prompt width and wraps long command lines onto the wrong column.
+#
+# Escape format: \033[<attr>;<color>m
+#   attr: 0 regular, 1 bold, 4 underline, 40-47 background
+#   color: 30 black, 31 red, 32 green, 33 yellow, 34 blue, 35 purple, 36 cyan, 37 white
 
-### Predefine colors ###
-
-# Regular
+# Regular (attr 0 = normal weight)
 regblk='\[\033[0;30m\]' # Black
 regred='\[\033[0;31m\]' # Red
 reggrn='\[\033[0;32m\]' # Green
@@ -13,7 +24,7 @@ regpur='\[\033[0;35m\]' # Purple
 regcyn='\[\033[0;36m\]' # Cyan
 regwht='\[\033[0;37m\]' # White
 
-# Bold
+# Bold (attr 1 = bright/bold)
 bldblk='\[\033[1;30m\]' # Black
 bldred='\[\033[1;31m\]' # Red
 bldgrn='\[\033[1;32m\]' # Green
@@ -23,7 +34,7 @@ bldpur='\[\033[1;35m\]' # Purple
 bldcyn='\[\033[1;36m\]' # Cyan
 bldwht='\[\033[1;37m\]' # White
 
-# Underline
+# Underline (attr 4)
 undblk='\[\033[4;30m\]' # Black
 undred='\[\033[4;31m\]' # Red
 undgrn='\[\033[4;32m\]' # Green
@@ -33,7 +44,7 @@ undpur='\[\033[4;35m\]' # Purple
 undcyn='\[\033[4;36m\]' # Cyan
 undwht='\[\033[4;37m\]' # White
 
-# Background
+# Background (attr 40-47)
 bakblk='\[\033[40m\]'   # Black
 bakred='\[\033[41m\]'   # Red
 bakgrn='\[\033[42m\]'   # Green
@@ -43,25 +54,38 @@ bakpur='\[\033[45m\]'   # Purple
 bakcyn='\[\033[46m\]'   # Cyan
 bakwht='\[\033[47m\]'   # White
 
-# Reset
+# Reset: return terminal to default colors. Always place at the end of a
+# colored segment, otherwise subsequent output inherits the color.
 rstrst='\[\033[0m\]'    # Reset
 
-### Command prompt ###
+###############################################################################
+# set_ps1 — rebuild PS1 based on current dir + git state
+###############################################################################
+# This runs via PROMPT_COMMAND (set below), which bash executes just before
+# drawing each prompt. So every command gets an up-to-date branch color:
+# clean (green) vs staged (yellow) vs unstaged-dirty (red).
 function set_ps1() {
-    # set chroot prefix, if it exists
+    # Chroot prefix — shown only if /etc/debian_chroot exists (see below).
     PS1="${debian_chroot:+($debian_chroot)}"
-    # set user and hostname
+
+    # User@host — red for root (visual "danger!" cue), green for regular users.
     if [ "$USER" = root ]; then
         PS1+="$bldred\u$bldgrn@\h"
     else
         PS1+="$bldgrn\u@\h"
     fi
 
-    # set directory path
+    # Reset color, add `:`, then blue working directory (\w = $PWD, with $HOME
+    # abbreviated to ~). Reset again so the next segment picks its own color.
     PS1+="$rstrst:$bldblu\w$rstrst"
 
-    # determine if working in a Git repo
-    # modified from: https://github.com/jimeh/git-aware-prompt/
+    ###########################################################################
+    # Git branch detection
+    # Adapted from https://github.com/jimeh/git-aware-prompt/
+    ###########################################################################
+    # git rev-parse --abbrev-ref HEAD prints the current branch name, or
+    # "HEAD" when in detached-HEAD state. stderr is discarded so non-git
+    # dirs produce no output (and the `if` sees a non-zero exit).
     local branch
     if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null); then
         if [[ "$branch" == "HEAD" ]]; then
@@ -71,17 +95,17 @@ function set_ps1() {
         unset branch
     fi
 
-    # set git branch
+    # Only append the branch segment if we're inside a git repo.
     if [[ "$branch" != "" ]]; then
-        # determine if branch is dirty (uncommited changes)
-        #local dirty
-        #local status=$(git status --porcelain 2> /dev/null)
-        #if [[ "$status" != "" ]]; then
-        #    dirty=1
-        #else
-        #    dirty=0
-        #fi
-
+        # Why two git calls instead of `git status --porcelain`?
+        #   diff-files (worktree vs index)   -> unstaged changes
+        #   diff-index --cached HEAD (index vs HEAD) -> staged changes
+        # Both are cheap plumbing commands that skip `status`'s rename
+        # detection and formatting, so they're fast even in large repos.
+        # Colors:
+        #   red    -> unstaged changes (highest priority)
+        #   yellow -> staged but not committed
+        #   green  -> clean
         local branch_color
         if ! git diff-files --quiet; then
             branch_color="$bldred"
@@ -91,22 +115,32 @@ function set_ps1() {
             branch_color="$bldgrn"
         fi
 
-        # add git branch and status
         PS1+="$rstrst($branch_color$branch$rstrst)"
     fi
 
-    # end the prompt
+    # Trailing `$ ` (or `# ` for root, thanks to bash's \$ expansion).
     PS1+="\$ "
 }
+# Run set_ps1 before every prompt draw, so git state stays live.
 PROMPT_COMMAND=set_ps1
 
-# set variable identifying the chroot you work in (used in the prompt below)
+###############################################################################
+# Chroot indicator
+###############################################################################
+# debian_chroot is a convention: /etc/debian_chroot holds a short name
+# shown in the prompt so you can tell you're inside a chroot jail. Empty
+# outside chroots, so the `${debian_chroot:+...}` expansion adds nothing.
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# If this is an xterm set the title to user@host:dir
-#  TODO: get rid of this!
+###############################################################################
+# xterm title
+###############################################################################
+# Sets the terminal window/tab title to "user@host: cwd" using the OSC 0
+# escape: ESC ] 0 ; <title> BEL. Wrapped in \[ \] so it doesn't advance the
+# cursor. This PREPENDS to PS1, so it fires every prompt (keeping title in
+# sync with directory changes).
 case "$TERM" in
     xterm*|rxvt*)
         PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
