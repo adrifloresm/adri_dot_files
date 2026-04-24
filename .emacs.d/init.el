@@ -24,6 +24,18 @@
 ;; round-trip with other GUI apps.
 (setq x-select-enable-clipboard t)
 
+;; In terminal Emacs on WSL2, the setting above is a no-op (no X selection).
+;; Pipe cut/copy through clip.exe so M-w / C-w also reach the Windows clipboard.
+(when (and (not (display-graphic-p))
+           (executable-find "clip.exe"))
+  (defun wsl-copy-to-clipboard (text &optional _push)
+    "Send TEXT to the Windows clipboard via clip.exe."
+    (let ((process-connection-type nil))
+      (let ((p (start-process "clip" nil "clip.exe")))
+        (process-send-string p text)
+        (process-send-eof p))))
+  (setq interprogram-cut-function #'wsl-copy-to-clipboard))
+
 ;; ========== Matching parentheses ==========
 ;; Highlight the paren matching point's paren. Delay 0 = highlight instantly
 ;; (default 0.125s feels laggy when navigating lisp).
