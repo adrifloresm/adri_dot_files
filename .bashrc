@@ -194,7 +194,7 @@ alias dev='source devsearch'
 ###############################################################################
 export EDITOR=emacs               # git/cron/visudo/etc. respect $EDITOR
 alias nemacs='DISPLAY= emacs'     # force terminal UI even inside X
-alias e='emacs'
+alias e='emacs -nw'
 alias t='tmux'
 alias ta='tmux attach-session -t'
 alias tn='tmux new-session -s'

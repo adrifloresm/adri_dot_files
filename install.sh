@@ -102,7 +102,6 @@ FILES=(
     .prompt
     .gitconfig
     .tmux.conf
-    .toprc
     .devsearchrc
 )
 for f in "${FILES[@]}"; do

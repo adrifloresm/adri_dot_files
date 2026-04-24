@@ -111,7 +111,6 @@ FILES=(
     .prompt
     .gitconfig
     .tmux.conf
-    .toprc
     .devsearchrc
     .emacs.d/init.el
     .emacs.d/lisp

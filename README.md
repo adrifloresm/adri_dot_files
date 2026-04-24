@@ -1,7 +1,7 @@
 # Adriana's dotfiles
 
-Personal shell / editor configuration: bash, git, tmux, emacs, plus a
-couple of ancillary rc files (top, devsearch).
+Personal shell / editor configuration: bash, git, tmux, emacs, plus an
+ancillary rc file (devsearch).
 
 ## What's here
 
@@ -13,7 +13,6 @@ couple of ancillary rc files (top, devsearch).
 | `.prompt` | git-aware PS1 (branch name colored green/yellow/red = clean/staged/dirty) |
 | `.gitconfig` | `core.editor=emacs`, color palette, ~60 aliases, rerere, tight whitespace rules |
 | `.tmux.conf` | prefix stays C-b, 1-indexed windows/panes, `prefix R` reloads, mouse on, 100k scrollback |
-| `.toprc` | `top` column / sort preferences |
 | `.devsearchrc` | config for the `devsearch` source-tree tool |
 | `.emacs.d/init.el` | top-level Emacs init: clipboard, line numbers, paren match, mouse wheel |
 | `.emacs.d/lisp/` | split modules (`ui.el`, `keybindings.el`, `backup.el`, `autosave.el`, `functions.el`) + per-language hooks + vendored third-party modes (`markdown-mode`, `graphviz-dot-mode`, `thrift-mode`, `protobuf-mode`, `google-c-style`) |
